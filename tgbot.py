@@ -1,15 +1,25 @@
+from flask import Flask, request
 import telebot
 import os
 
-TOKEN = os.environ.get("BOT_TOKEN")  # Получаем токен из переменных окружения
+app = Flask(__name__)
+TOKEN = os.environ.get("BOT_TOKEN")
 bot = telebot.TeleBot(TOKEN)
 
-@bot.message_handler(commands=['start'])
-def send_welcome(message):
-    bot.send_message(message.chat.id, "Привіт! Я бот. Очікую на запитання зі сайту.")
+# Твой Telegram ID (получить можно у @userinfobot)
+ADMIN_CHAT_ID = 123456789  # <- замени на свой ID
 
-@bot.message_handler(func=lambda m: True)
-def echo_all(message):
-    bot.send_message(message.chat.id, "Ви написали: " + message.text)
+@app.route('/send_question', methods=['POST'])
+def send_question():
+    data = request.json
+    name = data.get('name', 'Н/Д')
+    phone = data.get('phone', 'Н/Д')
+    question = data.get('question', 'Н/Д')
 
-bot.infinity_polling()
+    msg = f"Нове запитання з сайту:\nІм'я: {name}\nТелефон: {phone}\nПитання: {question}"
+    bot.send_message(ADMIN_CHAT_ID, msg)
+
+    return {'status': 'success'}
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
