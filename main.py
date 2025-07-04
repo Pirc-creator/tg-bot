@@ -3,7 +3,7 @@ import telebot
 import os
 
 app = Flask(__name__)
-TOKEN = os.environ.get("BOT_TOKEN")
+TOKEN = os.environ.get("TOKEN")
 bot = telebot.TeleBot(TOKEN)
 
 # Твой Telegram ID (получить можно у @userinfobot)
