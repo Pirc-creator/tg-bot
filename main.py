@@ -1,25 +1,37 @@
+import os
 from flask import Flask, request
 import telebot
-import os
 
-app = Flask(__name__)
-TOKEN = os.environ.get("TOKEN")
+TOKEN = os.getenv("TOKEN", "7508154894:AAHTjKUGpnaZTj_vu7fANNNL2MdCOyfE87Y")
+CHAT_ID = os.getenv("CHAT_ID", "761743415")
+
 bot = telebot.TeleBot(TOKEN)
+app = Flask(__name__)
 
-# Твой Telegram ID (получить можно у @userinfobot)
-ADMIN_CHAT_ID = 761743415  # <- замени на свой ID
+@app.route('/')
+def home():
+    return 'Бот запущено!'
 
-@app.route('/send_question', methods=['POST'])
-def send_question():
+@app.route('/send', methods=['POST'])
+def send():
     data = request.json
-    name = data.get('name', 'Н/Д')
-    phone = data.get('phone', 'Н/Д')
-    question = data.get('question', 'Н/Д')
+    if not data:
+        return "No data received", 400
 
-    msg = f"Нове запитання з сайту:\nІм'я: {name}\nТелефон: {phone}\nПитання: {question}"
-    bot.send_message(ADMIN_CHAT_ID, msg)
+    name = data.get('name')
+    phone = data.get('phone')
+    message = data.get('message')
 
-    return {'status': 'success'}
+    if not all([name, phone, message]):
+        return "Missing fields", 400
+
+    text = f"<b>Нове повідомлення з сайту</b>\nІм’я: {name}\nТелефон: {phone}\nЗапитання: {message}"
+
+    try:
+        bot.send_message(CHAT_ID, text, parse_mode='HTML')
+        return "Message sent", 200
+    except Exception as e:
+        return f"Error: {e}", 500
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=10000)
