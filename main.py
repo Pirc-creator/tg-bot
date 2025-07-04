@@ -7,7 +7,7 @@ TOKEN = os.environ.get("BOT_TOKEN")
 bot = telebot.TeleBot(TOKEN)
 
 # Твой Telegram ID (получить можно у @userinfobot)
-ADMIN_CHAT_ID = 123456789  # <- замени на свой ID
+ADMIN_CHAT_ID = 761743415  # <- замени на свой ID
 
 @app.route('/send_question', methods=['POST'])
 def send_question():
