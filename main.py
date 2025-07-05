@@ -3,13 +3,13 @@ from flask_cors import CORS
 import telebot
 import os
 
-TOKEN = os.getenv("TOKEN")
-CHAT_ID = os.getenv("CHAT_ID")
+# Отримуємо токен і chat_id з середовища
+TOKEN = os.getenv("TOKEN", "7508154894:AAHTjKUGpnaZTj_vu7fANNNL2MdCOyfE87Y")
+CHAT_ID = os.getenv("CHAT_ID", "761743415")
 
 bot = telebot.TeleBot(TOKEN)
-
 app = Flask(__name__)
-CORS(app)
+CORS(app)  # Дозволяє CORS-запити з інших доменів
 
 @app.route('/')
 def index():
@@ -37,4 +37,5 @@ def send():
         return f"Error: {e}", 500
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 10000)))
+    port = int(os.environ.get('PORT', 10000))
+    app.run(host='0.0.0.0', port=port)
