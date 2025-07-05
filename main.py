@@ -4,8 +4,8 @@ import telebot
 import os
 
 # Отримуємо токен і chat_id з середовища
-TOKEN = os.getenv("TOKEN", "7508154894:AAHTjKUGpnaZTj_vu7fANNNL2MdCOyfE87Y")
-CHAT_ID = os.getenv("CHAT_ID", "761743415")
+TOKEN = os.getenv("TOKEN", "")
+CHAT_ID = os.getenv("CHAT_ID", "")
 
 bot = telebot.TeleBot(TOKEN)
 app = Flask(__name__)
