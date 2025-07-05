@@ -1,13 +1,15 @@
 from flask import Flask, request
+from flask_cors import CORS
 import telebot
 import os
 
-# Загружаем токен и chat_id из переменных среды или хардкодом (на первое время)
-TOKEN = os.getenv("TOKEN", "7508154894:AAHTjKUGpnaZTj_vu7fANNNL2MdCOyfE87Y")
-CHAT_ID = os.getenv("CHAT_ID", "761743415")
+TOKEN = os.getenv("TOKEN")
+CHAT_ID = os.getenv("CHAT_ID")
 
 bot = telebot.TeleBot(TOKEN)
+
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/')
 def index():
@@ -27,6 +29,7 @@ def send():
         return "Missing fields", 400
 
     text = f"<b>Нове повідомлення з сайту</b>\nІм’я: {name}\nТелефон: {phone}\nЗапитання: {message}"
+
     try:
         bot.send_message(CHAT_ID, text, parse_mode='HTML')
         return "OK", 200
