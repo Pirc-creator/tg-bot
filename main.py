@@ -3,13 +3,15 @@ from flask_cors import CORS
 import telebot
 import os
 
-# Отримуємо токен і chat_id з середовища
+# Загружаем данные из переменных окружения Render
 TOKEN = os.getenv("TOKEN", "")
-CHAT_ID = os.getenv("CHAT_ID", "")
+CHAT_IDS = os.getenv("CHAT_IDS", "")  # строка вида "123,456,789"
+CHAT_IDS = [chat_id.strip() for chat_id in CHAT_IDS.split(",") if chat_id.strip()]
 
 bot = telebot.TeleBot(TOKEN)
+
 app = Flask(__name__)
-CORS(app)  # Дозволяє CORS-запити з інших доменів
+CORS(app)
 
 @app.route('/')
 def index():
@@ -30,11 +32,18 @@ def send():
 
     text = f"<b>Нове повідомлення з сайту</b>\nІм’я: {name}\nТелефон: {phone}\nЗапитання: {message}"
 
-    try:
-        bot.send_message(CHAT_ID, text, parse_mode='HTML')
+    success = 0
+    for chat_id in CHAT_IDS:
+        try:
+            bot.send_message(chat_id, text, parse_mode='HTML')
+            success += 1
+        except Exception as e:
+            print(f"❌ Не вдалося надіслати повідомлення {chat_id}: {e}")
+
+    if success:
         return "OK", 200
-    except Exception as e:
-        return f"Error: {e}", 500
+    else:
+        return "Failed to send to all recipients", 500
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 10000))
